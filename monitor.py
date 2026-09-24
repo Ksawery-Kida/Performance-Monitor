@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
-"""Samples CPU / RAM / swap / memory pressure every INTERVAL seconds into CSV files.
-Standard library only. Runs under launchd (see com.ksawery.perfmon.plist)."""
+"""logs cpu / ram / swap every minute to csv - started by launchd"""
 import csv, datetime, os, re, subprocess, time
 
 INTERVAL = 60          # seconds between samples
 TOP_N = 5              # top processes logged per sample
-STOP_AFTER_DAYS = 8    # auto-stop safety net
+STOP_AFTER_DAYS = 8    # so it doesn't run forever
 DIR = os.path.expanduser("~/perfmon/data")
 os.makedirs(DIR, exist_ok=True)
 START = time.time()
@@ -14,7 +13,7 @@ def sh(cmd):
     return subprocess.run(cmd, capture_output=True, text=True).stdout
 
 def cpu():
-    # 2 samples 1s apart; the 2nd one is the real current usage
+    # first top sample is garbage (avg since boot), use the 2nd one
     out = sh(["top", "-l", "2", "-n", "0", "-s", "1"])
     m = re.findall(r"CPU usage: ([\d.]+)% user, ([\d.]+)% sys, ([\d.]+)% idle", out)[-1]
     load = re.findall(r"Load Avg: ([\d.]+)", out)[-1]
@@ -28,7 +27,7 @@ def memory():
     app = g("Anonymous pages") - g("Pages purgeable")
     wired = g("Pages wired down")
     comp = g("Pages occupied by compressor")
-    used = app + wired + comp            # ~ Activity Monitor "Memory Used"
+    used = app + wired + comp            # same as "Memory Used" in Activity Monitor
     swap = re.search(r"used = ([\d.]+)M", sh(["sysctl", "-n", "vm.swapusage"]))
     free_pct = re.search(r"free percentage: (\d+)", sh(["memory_pressure", "-Q"]))
     GB = 1024 ** 3

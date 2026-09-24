@@ -1,17 +1,18 @@
 # Performance Monitor
 
-A lightweight CPU / RAM logger for macOS. It runs in the background for a week and then shows you how much memory and CPU your real work needs. I built it to decide what to buy when switching Macs.
+I'm switching to a new Mac and didn't want to guess how much RAM I actually need, so I wrote this. It logs my CPU and RAM usage in the background for a week, and then I check the peaks.
 
-It uses only the Python standard library and built-in macOS tools (`top`, `vm_stat`, `sysctl`, `memory_pressure`, `ps`), so there's nothing to install.
+No dependencies. It's just Python's standard library plus the tools macOS already has (`top`, `vm_stat`, `sysctl`, `memory_pressure`, `ps`).
 
-## What it logs (every 60 s)
+## What it logs
 
-- **CPU**: total %, split into user and system time, plus the load average
-- **RAM**: memory used (same as Activity Monitor), with app, wired and compressed memory broken out
-- **Swap** and **memory pressure**: the signals that show whether a machine is actually short on RAM
-- **Top processes**: the 5 using the most CPU and the 5 using the most RAM
+Once a minute:
+- CPU usage (user / sys / total) and load average
+- RAM used (the same number Activity Monitor shows), split into app / wired / compressed
+- swap and memory pressure
+- top 5 processes by CPU and top 5 by RAM
 
-Data goes to `data/system.csv` and `data/processes.csv`. Both are git-ignored because they list the apps you run.
+Everything goes into `data/system.csv` and `data/processes.csv`. I don't commit those because they show which apps I run.
 
 ## Setup
 
@@ -21,16 +22,14 @@ sed "s#__HOME__#$HOME#g" ~/perfmon/com.perfmon.plist.template > ~/Library/Launch
 launchctl load ~/Library/LaunchAgents/com.ksawery.perfmon.plist
 ```
 
-It starts right away, starts again after a reboot or crash, and stops by itself after 8 days (change `STOP_AFTER_DAYS` in `monitor.py`). The paths assume the repo is cloned to `~/perfmon`.
+launchd starts it right away and restarts it after a reboot. It stops by itself after 8 days (`STOP_AFTER_DAYS` in `monitor.py`).
 
 ## Usage
 
 ```bash
-python3 ~/perfmon/report.py                                        # build and open the HTML report
-launchctl list | grep perfmon                                      # check that it's running
+python3 ~/perfmon/report.py                                        # report with charts
+launchctl list | grep perfmon                                      # is it running?
 launchctl unload ~/Library/LaunchAgents/com.ksawery.perfmon.plist  # stop it
 ```
 
-The report shows CPU and RAM charts over time, the average, 95th percentile and peak for each, the heaviest processes, and a verdict on how much RAM you need.
-
-**Reading it:** look at **peak RAM + swap** and **max memory pressure**, not "RAM used". macOS fills spare RAM with cache anyway, so a full RAM bar doesn't mean you're running out.
+One thing I learned: "RAM used" doesn't mean much on macOS because it fills free RAM with cache anyway. The numbers that matter are **peak RAM + swap** and **memory pressure**.

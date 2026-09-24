@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Builds ~/perfmon/report.html from the CSV logs. Run any time: python3 ~/perfmon/report.py"""
+"""makes report.html from the csv files"""
 import csv, json, os, statistics, webbrowser
 from collections import defaultdict
 D = os.path.expanduser("~/perfmon")
@@ -16,7 +16,7 @@ for r in csv.DictReader(open(f"{D}/data/processes.csv")):
     p[0] = max(p[0], m); p[1] = max(p[1], c); p[2] += c; p[3] += 1
 by_ram = sorted(procs.items(), key=lambda x: -x[1][0])[:15]
 by_cpu = sorted(procs.items(), key=lambda x: -x[1][2])[:15]
-step = max(1, len(sysrows) // 2000)           # downsample for the chart
+step = max(1, len(sysrows) // 2000)           # too many points makes the chart slow
 pts = sysrows[::step]
 total = float(sysrows[0]["ram_total_gb"])
 peak_need = S["ram_used_gb"]["max"] + S["swap_gb"]["max"]
