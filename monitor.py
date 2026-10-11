@@ -1,10 +1,9 @@
-#!/usr/bin/env python3
 """logs cpu / ram / swap every minute to csv - started by launchd"""
 import csv, datetime, os, re, subprocess, time
 
-INTERVAL = 60          # seconds between samples
-TOP_N = 5              # top processes logged per sample
-STOP_AFTER_DAYS = 8    # so it doesn't run forever
+INTERVAL = 60          
+TOP_N = 5              
+STOP_AFTER_DAYS = 8   
 DIR = os.path.expanduser("~/perfmon/data")
 os.makedirs(DIR, exist_ok=True)
 START = time.time()
@@ -13,7 +12,6 @@ def sh(cmd):
     return subprocess.run(cmd, capture_output=True, text=True).stdout
 
 def cpu():
-    # first top sample is garbage (avg since boot), use the 2nd one
     out = sh(["top", "-l", "2", "-n", "0", "-s", "1"])
     m = re.findall(r"CPU usage: ([\d.]+)% user, ([\d.]+)% sys, ([\d.]+)% idle", out)[-1]
     load = re.findall(r"Load Avg: ([\d.]+)", out)[-1]
