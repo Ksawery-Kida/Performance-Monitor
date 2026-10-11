@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+
 """makes report.html from the csv files"""
 import csv, json, os, statistics, webbrowser
 from collections import defaultdict
@@ -10,13 +10,13 @@ def stats(k): v = col(k); return dict(avg=round(statistics.mean(v), 1), p95=roun
 
 S = {k: stats(k) for k in ["cpu_total", "ram_used_gb", "swap_gb", "mem_pressure_pct", "compressed_gb"]}
 hours = len(sysrows) * 60 / 3600
-procs = defaultdict(lambda: [0, 0.0, 0, 0])   # peak_ram, peak_cpu, sum_cpu, samples
+procs = defaultdict(lambda: [0, 0.0, 0, 0])   
 for r in csv.DictReader(open(f"{D}/data/processes.csv")):
     p = procs[r["process"]]; c, m = float(r["cpu_pct"]), int(r["ram_mb"])
     p[0] = max(p[0], m); p[1] = max(p[1], c); p[2] += c; p[3] += 1
 by_ram = sorted(procs.items(), key=lambda x: -x[1][0])[:15]
 by_cpu = sorted(procs.items(), key=lambda x: -x[1][2])[:15]
-step = max(1, len(sysrows) // 2000)           # too many points makes the chart slow
+step = max(1, len(sysrows) // 2000)           
 pts = sysrows[::step]
 total = float(sysrows[0]["ram_total_gb"])
 peak_need = S["ram_used_gb"]["max"] + S["swap_gb"]["max"]
