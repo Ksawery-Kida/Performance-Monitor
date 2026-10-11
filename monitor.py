@@ -25,7 +25,7 @@ def memory():
     app = g("Anonymous pages") - g("Pages purgeable")
     wired = g("Pages wired down")
     comp = g("Pages occupied by compressor")
-    used = app + wired + comp            # same as "Memory Used" in Activity Monitor
+    used = app + wired + comp           
     swap = re.search(r"used = ([\d.]+)M", sh(["sysctl", "-n", "vm.swapusage"]))
     free_pct = re.search(r"free percentage: (\d+)", sh(["memory_pressure", "-Q"]))
     GB = 1024 ** 3
