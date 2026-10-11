@@ -1,8 +1,6 @@
 # Performance Monitor
 
-I'm switching to a new Mac and didn't want to guess how much RAM I actually need, so I wrote this. It logs my CPU and RAM usage in the background for a week, and then I check the peaks.
-
-No dependencies. It's just Python's standard library plus the tools macOS already has (`top`, `vm_stat`, `sysctl`, `memory_pressure`, `ps`).
+I'm switching to a new Mac and didn't want to guess how much ram I actually need, so I wrote this. It logs my CPU and RAM usage in the background for a week, and then I check the peaks.
 
 ## What it logs
 
