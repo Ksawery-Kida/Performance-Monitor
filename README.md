@@ -1,12 +1,12 @@
 # Performance Monitor
 
-I'm switching to a new Mac and didn't want to guess how much ram I actually need, so I wrote this. It logs my CPU and RAM usage in the background for a week, and then I check the peaks.
+I'm switching to a new Mac and didn't want to guess how much ram I actually need, so I wrote this. It logs my cpu and ram usage in the background for a week, and then I check the peaks.
 
 ## What it logs
 
 Once a minute:
-- CPU usage (user / sys / total) and load average
-- RAM used (the same number Activity Monitor shows), split into app / wired / compressed
+- cpu usage (user / sys / total) and load average
+- ram used (the same number Activity Monitor shows), split into app / wired / compressed
 - swap and memory pressure
 - top 5 processes by CPU and top 5 by RAM
 
